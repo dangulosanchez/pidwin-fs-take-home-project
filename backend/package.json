@@ -2,10 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Pidwin Full Stack Backend Take-Home Project",
-  "main": "index.js",
+  "main": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "tsc --noEmit && node --no-warnings=ExperimentalWarning --loader ts-node/esm/transpile-only index.ts",
     "dev": "ts-node-esm index.ts",
     "build": "tsc"
   },
