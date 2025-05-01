@@ -3,12 +3,13 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import { LoginRequest } from "../types/index.js";
+import { getUserByEmail } from "../cache/usersCache.js";
 
 const login = async (req: Request, res: Response) => {
   const { email, password }: LoginRequest = req.body;
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await getUserByEmail(email);
 
     if (!existingUser) {
       return res.status(404).json({ message: "User Does Not Exist" });
@@ -29,6 +30,7 @@ const login = async (req: Request, res: Response) => {
         name: existingUser.name,
         email: existingUser.email,
         password: existingUser.password,
+        tokens: existingUser.tokens,
       },
       "test",
       { expiresIn: "1h" }

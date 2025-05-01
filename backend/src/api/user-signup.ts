@@ -3,8 +3,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import { SignupRequest } from "../types/index.js";
+import { initializeUserWithTokens } from "../utils/tokens.js";
 
-const signup = async (req: Request, res: Response) => {
+const  signup = async (req: Request, res: Response) => {
   const { email, password, confirmPassword, firstName, lastName }: SignupRequest = req.body;
 
   try {
@@ -18,11 +19,8 @@ const signup = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const result = await User.create({
-      email,
-      password: hashedPassword,
-      name: `${firstName} ${lastName}`,
-    });
+    const userObject = initializeUserWithTokens({email, password: hashedPassword, name: `${firstName} ${lastName}`, tokens: 0});
+    const result = await User.create(userObject);
     
     const token = jwt.sign(
       {
@@ -30,6 +28,7 @@ const signup = async (req: Request, res: Response) => {
         name: result.name,
         email: result.email,
         password: result.password,
+        tokens: result.tokens,
       },
       "test",
       { expiresIn: "1h" }

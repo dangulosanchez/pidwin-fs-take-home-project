@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Grow, Paper, Typography } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
 import { UserData } from "../../types/actionTypes";
+import Lucky7 from "../Lucky7/Lucky7";
 
 const Home: React.FC = () => {
   let user: UserData | null = null;
@@ -18,21 +19,28 @@ const Home: React.FC = () => {
     console.error("Error parsing profile from localStorage:", error);
     user = null;
   }
-
+  
   return (
     <Grow in>
       <Container component="main" maxWidth="sm">
-        <Paper elevation={3}>
-          {user !== null ? (
-            <Typography variant="h4" align="center" color="primary">
-              {`Welcome ${user.name}`}
-            </Typography>
-          ) : (
-            <Typography variant="h4" align="center" color="primary">
+        { user  ? (
+            <>
+              <Paper elevation={3}>
+                <Typography variant="h4" align="center" color="primary">
+                  {`Welcome ${user.name}`}
+                </Typography>
+              </Paper>
+              <Paper elevation={3} sx={{marginTop: "30px"}}>
+                <Lucky7 
+                  user={user}
+                />
+              </Paper>
+            </>
+        ) : (
+          <Typography variant="h4" align="center" color="primary">
               Login to Play
             </Typography>
-          )}
-        </Paper>
+        )}
       </Container>
     </Grow>
   );

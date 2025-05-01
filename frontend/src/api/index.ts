@@ -1,7 +1,7 @@
 import axios from "axios";
-import { LoginFormData, SignupFormData, PasswordChangeFormData } from "../types/actionTypes";
+import { LoginFormData, SignupFormData, PasswordChangeFormData, Lucky7Data } from "../types/actionTypes";
 
-const API = axios.create({ baseURL: "http://localhost:5000" });
+const API = axios.create({ baseURL: "http://localhost:5001" });
 
 API.interceptors.request.use((req) => {
   if (localStorage.getItem("profile")) {
@@ -16,3 +16,4 @@ export const login = (formData: LoginFormData) => API.post("/api/user/login", fo
 export const signUp = (formData: SignupFormData) => API.post("/api/user/signup", formData);
 export const changePassword = (formData: PasswordChangeFormData) =>
   API.post("/api/user/changePassword", formData);
+export const playLucky7 = (formData : Lucky7Data) => API.post("/api/lucky7/play", formData);

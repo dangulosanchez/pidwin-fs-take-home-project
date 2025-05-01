@@ -8,6 +8,8 @@ const userSchema: Schema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   id: { type: String },
+  _id: {type: String},
+  tokens: { type: Number, default: 0 }
 });
 
 export default mongoose.model<UserModel>("User", userSchema);

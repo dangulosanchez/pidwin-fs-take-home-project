@@ -6,6 +6,7 @@ export interface UserDocument {
   name: string;
   email: string;
   password: string;
+  tokens: number;
   id?: string;
 }
 
@@ -37,4 +38,10 @@ export interface UserJwtPayload extends JwtPayload {
 
 export interface AuthRequest extends Request {
   userId?: string;
+}
+
+export interface Lucky7Response  {
+  message?: boolean;
+  email?: string;
+  payout?: boolean;
 }

@@ -49,6 +49,10 @@ const Navbar: React.FC = () => {
     }
   }, [location]);
 
+  const userIsValid = user !== "null" && user !== null;
+
+  console.log({user})
+
   return (
     <AppBar sx={styles.appBar} position="static" color="inherit">
       <div style={styles.brandContainer}>
@@ -61,6 +65,14 @@ const Navbar: React.FC = () => {
         >
           CoinToss
         </Typography>
+        {/* // TODO: Add styles to coins */}
+        {userIsValid && <Typography
+          sx={{...styles.heading, width: "120px"}}
+          variant="h6"
+          align="center"
+        >
+          {user?.tokens} tokens
+        </Typography>}
       </div>
       <Toolbar sx={styles.toolbar}>
         {user !== "null" && user !== null ? (

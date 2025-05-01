@@ -50,6 +50,14 @@ export enum ActionType {
     name: string;
     email: string;
     password: string;
+    tokens: number;
     exp?: number;
     picture?: string;
+  }
+
+  // Lucky 7
+  export interface Lucky7Data {
+    isLucky7: boolean;
+    email: string;
+    tokens: number;
   }

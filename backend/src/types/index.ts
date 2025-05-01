@@ -2,11 +2,12 @@ import { Request } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
 
 export interface UserDocument {
-  _id: string;
+  _id?: string;
   name: string;
   email: string;
   password: string;
   id?: string;
+  tokens: number;
 }
 
 export interface LoginRequest {
