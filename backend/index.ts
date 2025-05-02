@@ -10,6 +10,7 @@ import http from 'http';
 // Routes
 import userRouter from "./src/api/user.js";
 import lucky7Router from "./src/api/lucky7.js"
+import winStreaksRouter from "./src/api/winStreaks.js"
 
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
 
 import { Server } from "socket.io";
+import { initializeLongestWinStreaks } from "./src/cache/winStreaks.js";
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -28,25 +30,29 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
-
   socket.on("lucky7Socket", (data) => {
-    console.log("test data", data);
     io.emit("lucky7Socket", data);
+  })
+  socket.on("winstreaksSocket", (data) => {
+    io.emit("winstreaksSocket", data);
   })
 });
 
 app.use(cors());
 app.use("/api/user", userRouter);
 app.use("/api/lucky7", lucky7Router)
+app.use("/api/winstreaks", winStreaksRouter);
 
 const PORT: string | number = process.env.PORT || 5001;
 
 mongoose
   .connect(process.env.MONGODB_URL || '')
   .then(() => {
-    app.listen(PORT, () =>
-      console.log(`Server listening on http://localhost:${PORT}`)
+    app.listen(PORT, async () =>
+      {
+        console.log(`Server listening on http://localhost:${PORT}`)
+        await initializeLongestWinStreaks();
+      }
     );
   })
   .catch((error) => console.log(error.message));

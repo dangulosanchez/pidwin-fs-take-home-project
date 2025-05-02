@@ -1,4 +1,6 @@
+// Libraries
 import mongoose, { Schema } from "mongoose";
+// Types
 import { UserDocument } from "../types/index.js";
 
 interface UserModel extends UserDocument {}

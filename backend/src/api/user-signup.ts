@@ -1,8 +1,12 @@
+// Libraries
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+// Models
 import User from "../models/user.js";
+// Types
 import { SignupRequest } from "../types/index.js";
+// Functions
 import { initializeUserWithTokens } from "../utils/tokens.js";
 
 const  signup = async (req: Request, res: Response) => {

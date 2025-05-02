@@ -8,6 +8,8 @@ import { styles } from "./styles";
 import { UserData } from "../../types/actionTypes";
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
+import { useSelector } from "react-redux";
+import { RootState } from "../../reducers/index";
 
 const Navbar: React.FC = () => {
   const [user, setUser] = useState<UserData | "null">(
@@ -50,8 +52,11 @@ const Navbar: React.FC = () => {
   }, [location]);
 
   const userIsValid = user !== "null" && user !== null;
-
-  console.log({user})
+  let tokenCount = useSelector((state: RootState) => state.tokens.value);
+  if(user && String(tokenCount) === "null"){
+    // @ts-expect-error
+    tokenCount = user.tokens || 0;
+  }
 
   return (
     <AppBar sx={styles.appBar} position="static" color="inherit">
@@ -65,13 +70,12 @@ const Navbar: React.FC = () => {
         >
           CoinToss
         </Typography>
-        {/* // TODO: Add styles to coins */}
         {userIsValid && <Typography
           sx={{...styles.heading, width: "120px"}}
           variant="h6"
           align="center"
         >
-          {user?.tokens} tokens
+          {tokenCount} tokens
         </Typography>}
       </div>
       <Toolbar sx={styles.toolbar}>

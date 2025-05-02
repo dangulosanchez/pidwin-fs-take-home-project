@@ -1,3 +1,4 @@
+// Types
 import { UserDocument } from "../types/index.js";
 
  const initializeUserWithTokens = (user: UserDocument, tokens?: number) => {

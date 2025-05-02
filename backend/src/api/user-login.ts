@@ -1,9 +1,12 @@
+// Libraries
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/user.js";
+// Types
 import { LoginRequest } from "../types/index.js";
+// Cache utils
 import { getUserByEmail } from "../cache/usersCache.js";
+import { getUserWinStreak } from "../cache/winStreaks.js";
 
 const login = async (req: Request, res: Response) => {
   const { email, password }: LoginRequest = req.body;
@@ -24,6 +27,8 @@ const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid Password" });
     }
 
+    const existingUserStreak = await getUserWinStreak(existingUser);
+
     const token = jwt.sign(
       {
         _id: existingUser._id,
@@ -31,6 +36,7 @@ const login = async (req: Request, res: Response) => {
         email: existingUser.email,
         password: existingUser.password,
         tokens: existingUser.tokens,
+        streak: existingUserStreak?.streak ?? 0,
       },
       "test",
       { expiresIn: "1h" }

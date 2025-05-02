@@ -1,5 +1,5 @@
 import { Button, Checkbox, Grid } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Lucky7Response, UserDocument } from "../../types";
 import { playLucky7 } from "../../api";
 
@@ -13,16 +13,25 @@ const Wager: React.FC<WagerProps> = ({ user, onSubmitCallback }) => {
     const [tokensToWager, setTokensToWager] = useState(0);
     const [isLucky7Input, setIsLucky7Input] = useState(false);
 
+    const disableWagerButton = !tokensToWager || !user?.tokens || user?.tokens < tokensToWager;
+
     return (
         <>
-            <Grid container direction={"row"} sx={{justifyContent: "space-between", alignContent: "center", alignItems: "center"}}>
-                <Grid item xs={8}>
+            <Grid container direction={"row"} sx={{justifyContent: "space-between", alignContent: "center", alignItems: "center", padding: "10px"}}>
+                <Grid item xs={9}>
                     <label>
                         Tokens to wager:
-                        <input type="number" name="wager" value={tokensToWager} max={user.tokens} onChange={(e) => setTokensToWager(+e.target.value)}/>
+                        <input 
+                            type="number"
+                            name="wager"
+                            value={tokensToWager}
+                            max={user.tokens}
+                            min={0}
+                            onChange={(e) => setTokensToWager(+e.target.value)}
+                        />
                     </label>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                         <label>
                             Is lucky 7?:
                             <Checkbox
@@ -33,8 +42,8 @@ const Wager: React.FC<WagerProps> = ({ user, onSubmitCallback }) => {
                     </label>
                 </Grid>
             </Grid>
-            <Grid container direction={"row"} sx={{justifyContent: "center", alignContent: "center", alignItems: "center"}} >
-                <Button variant="contained" sx={{width: "25rem"}} disabled={Boolean(!user.tokens || user?.tokens < tokensToWager )} onClick={async () => {
+            <Grid container direction={"row"} sx={{justifyContent: "center", alignContent: "center", alignItems: "center", padding: "5px"}} >
+                <Button variant="contained" sx={{width: "25rem"}} disabled={disableWagerButton} onClick={async () => {
                     const lucky7Response = await playLucky7({
                         tokens: tokensToWager,
                         email: user.email,
@@ -42,7 +51,7 @@ const Wager: React.FC<WagerProps> = ({ user, onSubmitCallback }) => {
                     })
                     onSubmitCallback(lucky7Response?.data);
                 }}>
-                    Wager!
+                    WAGER
                 </Button>
             </Grid> 
         </>

@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Login from "./components/Login/Login";
 import Home from "./components/Home/Home";
 import PasswordSetting from "./components/PasswordSettings/PasswordSettings";
+import Streaks from "./components/Streaks/Streaks";
 
 
 const App: React.FC = () => {
@@ -32,6 +33,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Login />} />
           <Route path="/password" element={<PasswordSetting />} />
+          <Route path="/streaks" element={<Streaks/>} />
         </Routes>
       </Container>
     </BrowserRouter>

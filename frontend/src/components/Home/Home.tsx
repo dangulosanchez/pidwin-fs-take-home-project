@@ -1,10 +1,15 @@
 import React from "react";
-import { Container, Grow, Paper, Typography } from "@mui/material";
+import { Button, Container, Grow, Paper, Typography } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
 import { UserData } from "../../types/actionTypes";
 import Lucky7 from "../Lucky7/Lucky7";
+import { useDispatch } from "react-redux";
+import { setStreaks } from "../../actions/tokens";
+import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   let user: UserData | null = null;
   
   try {
@@ -13,6 +18,7 @@ const Home: React.FC = () => {
       const profile = JSON.parse(profileStr);
       if (profile?.token) {
         user = jwtDecode<UserData>(profile.token);
+        dispatch(setStreaks(user?.streak ?? 0));
       }
     }
   } catch (error) {
@@ -34,6 +40,11 @@ const Home: React.FC = () => {
                 <Lucky7 
                   user={user}
                 />
+              </Paper>
+              <Paper elevation={3} sx={{marginTop: "30px", textAlign: "center"}}>
+                <Button title="" 
+                  onClick={() => navigate("/streaks")}
+                >View Win Streaks Leaderboard</Button>
               </Paper>
             </>
         ) : (

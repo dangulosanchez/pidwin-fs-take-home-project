@@ -1,13 +1,16 @@
+// Libraries
 import express from "express";
-const router = express.Router();
-
 import { Request, Response } from "express";
+// Models
 import User from "../models/user.js";
+// Cache utils
 import { getLucky7 } from "../cache/lucky7Cache.js";
 import { addTimestampToUserWagers, getUserByEmail } from "../cache/usersCache.js";
-import { UserDocument } from "../types/index.js";
+import { processUserWinStreak } from "../cache/winStreaks.js";
+// Functions
 import { isWithinTenSeconds, performLucky7Evaluation } from "../utils/lucky7.js";
 
+const router = express.Router();
 
 type Lucky7Request = {
   tokens: number;
@@ -65,8 +68,6 @@ const playLucky7 = async (req: Request, res: Response) => {
       return res.status(200).json({ message: "Cannot wager on this roll again.", wageAccepted: false });
     }
 
-    let initialTokens = existingUser.tokens;
-
     existingUser.tokens = existingUser.tokens - tokens;
     updateUserTokens(email, existingUser.tokens);
 
@@ -77,15 +78,16 @@ const playLucky7 = async (req: Request, res: Response) => {
       updateUserTokens(email, existingUser.tokens);
     }
 
-    console.log({ 
-      initialTokens,
-      tokensWagered: tokens,
-      newTokenOffset,
-      total: existingUser.tokens,
-      roll
+    const currentStreak = await processUserWinStreak(existingUser, newTokenOffset > 0);    
+    console.log("processUserWinStreak" ,existingUser)
+    return res.status(200).json({ 
+      email, 
+      ...roll , 
+      wageAccepted: true, 
+      payout: newTokenOffset > 0, 
+      tokens: existingUser.tokens,
+      streak: currentStreak,
     });
-    
-    return res.status(200).json({ email, ...roll , wageAccepted: true, payout: newTokenOffset > 0});
 
   } catch (error) {
     console.error("Login error:", error);

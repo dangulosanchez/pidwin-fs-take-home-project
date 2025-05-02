@@ -10,6 +10,14 @@ export interface UserDocument {
   tokens: number;
 }
 
+export interface WinStreak {
+  name: string;
+  email: string;
+  streak: number;
+  _id?: string;
+  historic?: boolean;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;

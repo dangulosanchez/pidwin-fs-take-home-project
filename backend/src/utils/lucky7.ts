@@ -1,3 +1,4 @@
+// Types
 import { Lucky7RollResult } from "../types/lucky7.js";
 
 // Inclusive whole number random function as per Stack overflow
@@ -7,14 +8,8 @@ function getRandomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-/**
- * Checks whether `secondTs` is less than 10 seconds after `firstTs`
- *
- * @param firstTs  - timestamp in milliseconds (e.g. Date.now())
- * @param secondTs - timestamp in milliseconds
- * @returns        - true if 0 < (secondTs - firstTs) < 10_000 ms
- */
-export function isWithinTenSeconds(firstTs: number, secondTs: number): boolean {
+
+function isWithinTenSeconds(firstTs: number, secondTs: number): boolean {
     const diff = secondTs - firstTs;
     return diff > 0 && diff < 10_000;
   }
@@ -39,6 +34,7 @@ const performLucky7Evaluation = (result: Lucky7RollResult, tokensWagered: number
 }
 
 export {
+    isWithinTenSeconds,
     lucky7Roll,
     performLucky7Evaluation
 }

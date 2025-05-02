@@ -1,6 +1,9 @@
+// Libraries
 import { Response } from "express";
 import bcrypt from "bcryptjs";
+// Models
 import User from "../models/user.js";
+// Types
 import { AuthRequest, PasswordChangeRequest } from "../types/index.js";
 
 const changePassword = async (req: AuthRequest, res: Response) => {

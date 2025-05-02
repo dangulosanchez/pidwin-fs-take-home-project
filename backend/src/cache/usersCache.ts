@@ -1,6 +1,9 @@
-import { UserDocument } from "../types/index.js";
-import User from "../models/user.js"
+// Libraries
 import { FilterQuery } from "mongoose";
+// Models
+import User from "../models/user.js";
+// Types
+import { UserDocument } from "../types/index.js";
 
 const users: UserDocument[] = [];
 const userWagerTimestamps : {email: string, timestamps: number[]}[] = [];

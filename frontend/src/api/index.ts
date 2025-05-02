@@ -17,3 +17,4 @@ export const signUp = (formData: SignupFormData) => API.post("/api/user/signup",
 export const changePassword = (formData: PasswordChangeFormData) =>
   API.post("/api/user/changePassword", formData);
 export const playLucky7 = (formData : Lucky7Data) => API.post("/api/lucky7/play", formData);
+export const getWinStreaks = () => API.get("/api/winstreaks");

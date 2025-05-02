@@ -1,5 +1,7 @@
+// Libraries
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+// Types
 import { AuthRequest, UserJwtPayload } from "../types/index.js";
 
 const auth = async (req: AuthRequest, res: Response, next: NextFunction) => {

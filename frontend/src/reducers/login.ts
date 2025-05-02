@@ -4,6 +4,7 @@ import { AuthAction, AuthState } from '../types/actionTypes';
 const initialState: AuthState = { authData: null };
 
 const loginReducer = (state: AuthState = initialState, action: AuthAction): AuthState => {
+    // @ts-ignore
     switch (action.type) {
         case LOGIN:
             localStorage.setItem('profile', JSON.stringify({ ...action.data }));

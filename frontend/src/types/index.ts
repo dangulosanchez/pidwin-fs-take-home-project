@@ -8,6 +8,7 @@ export interface UserDocument {
   password: string;
   tokens: number;
   id?: string;
+  streak?: number;
 }
 
 export interface LoginRequest {
@@ -44,4 +45,22 @@ export interface Lucky7Response  {
   message?: boolean;
   email?: string;
   payout?: boolean;
+  tokens?: number;
+  timestamp?: number;
+  dice?: number[];
+  isLucky7?: boolean;
+  wageAccepted?: boolean;
+  streak?: number;
+}
+
+export interface LiveRolls {
+  dice: number[];
+  isLucky7: boolean;
+  timestamp: number;
+}
+
+export interface LiveStreaks {
+  _id: string;
+  name: string;
+  streak: number;
 }
