@@ -1,14 +1,11 @@
 // Libraries
 import express from "express";
 import { Request, Response } from "express";
-// Models
-import User from "../models/user.js";
 // Cache utils
-import { getLucky7 } from "../cache/lucky7Cache.js";
+import { addWagerToQueue, get5PreviousRolls, getLucky7 } from "../cache/lucky7Cache.js";
 import { addTimestampToUserWagers, getUserByEmail } from "../cache/usersCache.js";
-import { processUserWinStreak } from "../cache/winStreaks.js";
 // Functions
-import { isWithinTenSeconds, performLucky7Evaluation } from "../utils/lucky7.js";
+import { isWithinTenSeconds, lucky7Roll, updateUserTokens } from "../utils/lucky7.js";
 
 const router = express.Router();
 
@@ -18,24 +15,6 @@ type Lucky7Request = {
   isLucky7: boolean;
 }
 
-const updateUserTokens = async (email: string, tokens: number ) => {
-  const updated = await User.findOneAndUpdate(
-    { email },
-    { $set: { tokens } },
-    { 
-      new: true,
-      runValidators: true, 
-      useFindAndModify: false, 
-    }
-  );
-
-  if (!updated) {
-    throw new Error(`No user found with email: ${email}`);
-  }
-
-  return updated;
-
-}
 
 const playLucky7 = async (req: Request, res: Response) => {
   const { tokens, email, isLucky7 }: Lucky7Request = req.body;
@@ -44,7 +23,6 @@ const playLucky7 = async (req: Request, res: Response) => {
   const currentTimestamp = Date.now();
 
   if(!isWithinTenSeconds(roll.timestamp, currentTimestamp)) {
-    console.log("Cannot wager. Please wait until next roll.")
     return res.status(200).json({ message: "Cannot wager. Please wait until next roll" });
   }
 
@@ -57,37 +35,26 @@ const playLucky7 = async (req: Request, res: Response) => {
     }
 
     if(existingUser?.tokens < tokens) {
-      console.log("Not enough tokens.")
       return res.status(200).json({ message: "Not enough tokens.", wageAccepted: false });
     }
 
     const timeStampIsValid = addTimestampToUserWagers(email, roll.timestamp);
 
     if(!timeStampIsValid){
-      console.log("Cannot wager on this roll again");
       return res.status(200).json({ message: "Cannot wager on this roll again.", wageAccepted: false });
     }
 
     existingUser.tokens = existingUser.tokens - tokens;
-    updateUserTokens(email, existingUser.tokens);
+    await updateUserTokens(email, existingUser.tokens);
 
-    let newTokenOffset = performLucky7Evaluation(roll, tokens, isLucky7);
+    addWagerToQueue(existingUser, tokens, isLucky7);
 
-    if(newTokenOffset) {
-      existingUser.tokens += newTokenOffset;
-      updateUserTokens(email, existingUser.tokens);
-    }
-
-    const currentStreak = await processUserWinStreak(existingUser, newTokenOffset > 0);    
-    console.log("processUserWinStreak" ,existingUser)
-    return res.status(200).json({ 
-      email, 
-      ...roll , 
-      wageAccepted: true, 
-      payout: newTokenOffset > 0, 
-      tokens: existingUser.tokens,
-      streak: currentStreak,
-    });
+    return res.status(200).json({
+      email,
+      wageAccepted: true,
+      tokens: tokens,
+      streak: 123
+    })
 
   } catch (error) {
     console.error("Login error:", error);
@@ -95,7 +62,15 @@ const playLucky7 = async (req: Request, res: Response) => {
   }
 };
 
+const startLucky7 = async (req: Request, res: Response) => {
+  const rolls = get5PreviousRolls();
+  return res.status(200).json({
+    rolls
+  })
+}
+
 router.post("/play", playLucky7);
+router.post("/start", startLucky7);
 
 
 export default router;

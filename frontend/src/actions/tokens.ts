@@ -5,7 +5,7 @@ export const setTokens = (amount: number) => ({
   payload: amount,
 });
 
-export const setStreaks = (amount : number) => ({
+export const setStreaks = (amount: number) => ({
   type: SET_STREAKS,
   payload: amount
 })

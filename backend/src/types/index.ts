@@ -15,7 +15,7 @@ export interface WinStreak {
   email: string;
   streak: number;
   _id?: string;
-  historic?: boolean;
+  active?: boolean;
 }
 
 export interface LoginRequest {

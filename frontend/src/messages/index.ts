@@ -1,6 +1,8 @@
 import { toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+let toastId = 0;
+
 const toastOptions: ToastOptions = {
   position: "bottom-left",
   autoClose: 3000,
@@ -9,16 +11,18 @@ const toastOptions: ToastOptions = {
   pauseOnHover: true,
   draggable: true,
   progress: undefined,
+  toastId,
 };
 
-export const success = (message: string) =>
-  toast.success(message, toastOptions);
+
+export const success = (message: string) => 
+  toast.success(message, {...toastOptions, toastId: ++toastId});
 
 export const error = (message: string) =>
-  toast.error(message, toastOptions);
+  toast.error(message, {...toastOptions, toastId: ++toastId});
 
 export const warning = (message: string) =>
-  toast.warning(message, toastOptions);
+  toast.warning(message, {...toastOptions, toastId: ++toastId});
 
 export const info = (message: string) =>
-  toast(message, toastOptions);
+  toast(message, {...toastOptions, toastId: ++toastId});

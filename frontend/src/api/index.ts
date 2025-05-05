@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LoginFormData, SignupFormData, PasswordChangeFormData, Lucky7Data } from "../types/actionTypes";
+import { LoginFormData, SignupFormData, PasswordChangeFormData, Lucky7Data, StartLucky7Data } from "../types/actionTypes";
 
 const API = axios.create({ baseURL: "http://localhost:5001" });
 
@@ -17,4 +17,5 @@ export const signUp = (formData: SignupFormData) => API.post("/api/user/signup",
 export const changePassword = (formData: PasswordChangeFormData) =>
   API.post("/api/user/changePassword", formData);
 export const playLucky7 = (formData : Lucky7Data) => API.post("/api/lucky7/play", formData);
+export const startLucky7 = (formData : StartLucky7Data) => API.post("/api/lucky7/start", formData);
 export const getWinStreaks = () => API.get("/api/winstreaks");

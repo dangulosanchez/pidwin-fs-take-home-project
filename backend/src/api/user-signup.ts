@@ -8,6 +8,7 @@ import User from "../models/user.js";
 import { SignupRequest } from "../types/index.js";
 // Functions
 import { initializeUserWithTokens } from "../utils/tokens.js";
+import { uuid } from "../utils/uuid.js";
 
 const  signup = async (req: Request, res: Response) => {
   const { email, password, confirmPassword, firstName, lastName }: SignupRequest = req.body;
@@ -23,7 +24,7 @@ const  signup = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const userObject = initializeUserWithTokens({email, password: hashedPassword, name: `${firstName} ${lastName}`, tokens: 0});
+    const userObject = initializeUserWithTokens({email, password: hashedPassword, name: `${firstName} ${lastName}`, tokens: 0, _id: uuid()});
     const result = await User.create(userObject);
     
     const token = jwt.sign(

@@ -68,6 +68,7 @@ const Login: React.FC = () => {
 
   const switchLogin = () => {
     setIsLoggedIn((prevState) => !prevState);
+    
   };
 
   if (user !== "null" && user !== null) {

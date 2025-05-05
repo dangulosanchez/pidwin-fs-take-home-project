@@ -1,9 +1,7 @@
+// UI
 import { Grid } from "@mui/material";
-import { LiveRolls } from "../../types";
-
-type RollsDisplayProps = {
-    rolls: LiveRolls[];
-}
+// Types
+import { RollsDisplayProps } from "../../types/props";
 
 const DICE_FACES = ['⚀','⚁','⚂','⚃','⚄','⚅'];
 

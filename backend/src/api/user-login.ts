@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { LoginRequest } from "../types/index.js";
 // Cache utils
 import { getUserByEmail } from "../cache/usersCache.js";
-import { getUserWinStreak } from "../cache/winStreaks.js";
+import { getUserActiveWinStreak } from "../cache/winStreaks.js";
 
 const login = async (req: Request, res: Response) => {
   const { email, password }: LoginRequest = req.body;
@@ -27,7 +27,7 @@ const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid Password" });
     }
 
-    const existingUserStreak = await getUserWinStreak(existingUser);
+    const existingUserStreak = await getUserActiveWinStreak(existingUser);
 
     const token = jwt.sign(
       {

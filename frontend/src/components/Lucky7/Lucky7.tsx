@@ -1,22 +1,20 @@
 // React
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 // MUI
 import { Grid, Typography } from "@mui/material";
 // Sockets
-import { socket } from '../../socket';
-// Actions
-import { setStreaks, setTokens } from "../../actions/tokens";
+import { getSocket } from '../../socket';
 // Components
 import Wager from "./Wager";
 import RollsDisplay from "./RollsDisplay";
 // Types
-import { LiveRolls, Lucky7Response, UserDocument } from "../../types";
+import { LiveRolls, Lucky7Response } from "../../types";
+import { Lucky7Props } from "../../types/props";
+// API
+import { startLucky7 } from "../../api";
 
-type Lucky7Props = {
-    user: UserDocument;
-}
 
 const renderReponse = (response: Lucky7Response) => {
   if(response?.payout){
@@ -25,7 +23,7 @@ const renderReponse = (response: Lucky7Response) => {
   if(isValidErrorMessage(String(response?.message ?? ""))){
     return <Typography>{response?.message}</Typography>
   }
-  return <Typography>Sorry! Try again!</Typography>
+  return <Typography>Wager is live...</Typography>
 }
 
 const isValidErrorMessage = (msg: string) => {
@@ -45,55 +43,53 @@ const getLucky7RollsToDisplay = (rolls: LiveRolls[]) => {
       rollsDisplay.push(rolls[i]);
     }
   }
-  return rollsDisplay.slice(-5);
+  while(rollsDisplay.length > 5) {
+    rollsDisplay.pop();
+  }
+  return rollsDisplay;
 }
 
 const Lucky7: React.FC<Lucky7Props> = (props) => {
 
-    const dispatch = useDispatch();
+    const socket = getSocket();
 
-    const [isConnected, setIsConnected] = useState(socket.connected);
     const [diceRolls, setDiceRolls] = useState([] as LiveRolls[]);
     const [response, setResponse] = useState<Lucky7Response | undefined>(undefined);
 
     const playLucky7Callback = async (response: Lucky7Response) => {
-      if(response.tokens){
-        dispatch(setTokens(response.tokens));
-      }
       setResponse(response);
-      if(response.wageAccepted){
-        dispatch(setStreaks(response.streak ?? 0));
-        setDiceRolls(getLucky7RollsToDisplay([...diceRolls, {dice: response.dice ?? [], isLucky7: Boolean(response.isLucky7), timestamp: response.timestamp || 0}]));
-      }
     }
 
     const { user } = props;
   
     useEffect(() => {
-      function onConnect() {
-        setIsConnected(true);
+  
+      function onNewLucky7Roll(value: LiveRolls[]) {
+        setResponse(undefined);
+        setDiceRolls(previous => getLucky7RollsToDisplay(value));
+      }
+
+      async function rollInitialDice() {
+        const rolls = (await startLucky7({ email: user.email }))?.data?.rolls ?? [] as LiveRolls[];
+        if(rolls){
+          setDiceRolls(rolls);
+        }
+      }
+
+      if(diceRolls.length < 5) {
+        rollInitialDice();
       }
   
-      function onDisconnect() {
-        setIsConnected(false);
-      }
-  
-      function onNewLucky7Roll(value: LiveRolls) {
-        setDiceRolls(previous => getLucky7RollsToDisplay([...previous, value]));
-      }
-  
-      socket.on('connect', onConnect);
-      socket.on('disconnect', onDisconnect);
-      socket.on('lucky7Socket', onNewLucky7Roll);
+      socket?.on?.('lucky7Socket', onNewLucky7Roll);
+      
   
       return () => {
-        socket.off('connect', onConnect);
-        socket.off('disconnect', onDisconnect);
-        socket.off('lucky7Socket', onNewLucky7Roll);
+        socket?.off?.('lucky7Socket');
+        socket?.off?.("initialDiceRoll")
       };
     }, []);
 
-    let winStreak = useSelector((state: RootState) => state.streaks.value);
+    const winStreak = useSelector((state: RootState) => state.streaks.value);
 
     return (
         <div style ={{padding: "10px"}}>

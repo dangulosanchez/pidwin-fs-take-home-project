@@ -1,0 +1,83 @@
+/* StreakTable.css */
+:root {
+    --bg-color: #ffffff;
+    --stripe-color: #f9f9f9;
+    --hover-color: #e0e0e0;
+    --check-color: #4caf50;
+    --cross-color: #f44336;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 400px;
+  }
+  
+  thead {
+    background: var(--bg-color);
+  }
+  
+  th, td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  tbody tr:nth-child(odd) {
+    background: var(--stripe-color);
+  }
+  
+  tbody tr:hover {
+    background: var(--hover-color);
+  }
+  
+  .active-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .active-true {
+    color: var(--check-color);
+  }
+  
+  .active-false {
+    color: var(--cross-color);
+  }
+  
+  /* small‑screen tweak: stack cells as “rows” */
+  @media (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+    tr {
+      margin-bottom: 1rem;
+    }
+    td {
+      position: relative;
+      padding-left: 50%;
+    }
+    td::before {
+      position: absolute;
+      left: 1rem;
+      font-weight: bold;
+    }
+    td:nth-of-type(1)::before { content: "Streak"; }
+    td:nth-of-type(2)::before { content: "Name"; }
+    td:nth-of-type(3)::before { content: "Active"; }
+  }
+  

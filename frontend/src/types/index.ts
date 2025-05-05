@@ -63,4 +63,5 @@ export interface LiveStreaks {
   _id: string;
   name: string;
   streak: number;
+  active: boolean;
 }

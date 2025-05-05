@@ -5,13 +5,14 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from 'dotenv';
 import http from 'http';
-
-
+// Sockets
+import { Server } from "socket.io";
+//Initialization
+import { initializeLongestWinStreaks } from "./src/cache/winStreaks.js";
 // Routes
 import userRouter from "./src/api/user.js";
 import lucky7Router from "./src/api/lucky7.js"
 import winStreaksRouter from "./src/api/winStreaks.js"
-
 
 dotenv.config();
 
@@ -19,8 +20,6 @@ const app: Express = express();
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
 
-import { Server } from "socket.io";
-import { initializeLongestWinStreaks } from "./src/cache/winStreaks.js";
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -29,13 +28,37 @@ const io = new Server(server, {
   }
 });
 
+io.use((socket, next) => {
+  const { email } = socket.handshake.auth as { email?: string };
+  if (!email) {
+    return next(new Error("Authentication error: email is required"));
+  }
+  socket.data.email = email;
+  next();
+});
+
 io.on('connection', (socket) => {
+  const email = socket.data.email as string;
+  socket.join(email);
+
   socket.on("lucky7Socket", (data) => {
     io.emit("lucky7Socket", data);
-  })
+  });
+
   socket.on("winstreaksSocket", (data) => {
     io.emit("winstreaksSocket", data);
+  });
+
+  socket.on("userTokens", (data) => {
+    io.to(email).emit("userTokens", data);
+  });
+
+  socket.on("userWager", (data) => {
+    io.to(email).emit("userWager", data);
   })
+
+  socket.on('disconnect', (reason) => {
+  });
 });
 
 app.use(cors());

@@ -1,19 +1,23 @@
-import { Button, Checkbox, Grid } from "@mui/material";
+// React
 import { useState } from "react";
-import { Lucky7Response, UserDocument } from "../../types";
-import { playLucky7 } from "../../api";
+import { RootState } from "../../reducers";
+import { useSelector } from "react-redux";
 
-type WagerProps = {
-    user: UserDocument;
-    onSubmitCallback: (response: Lucky7Response) => void;
-}
+// UI
+import { Button, Checkbox, Grid } from "@mui/material";
+// Types
+import { WagerProps } from "../../types/props";
+// API
+import { playLucky7 } from "../../api";
 
 const Wager: React.FC<WagerProps> = ({ user, onSubmitCallback }) => {
 
     const [tokensToWager, setTokensToWager] = useState(0);
     const [isLucky7Input, setIsLucky7Input] = useState(false);
 
-    const disableWagerButton = !tokensToWager || !user?.tokens || user?.tokens < tokensToWager;
+    const tokenCount = useSelector((state: RootState) => state.tokens.value);
+
+    const disableWagerButton = !tokensToWager || !tokenCount || tokenCount < tokensToWager;
 
     return (
         <>

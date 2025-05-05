@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import { Container } from "@mui/material";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 
@@ -11,9 +11,8 @@ import Home from "./components/Home/Home";
 import PasswordSetting from "./components/PasswordSettings/PasswordSettings";
 import Streaks from "./components/Streaks/Streaks";
 
-
 const App: React.FC = () => {
-
+  
   return (
     <BrowserRouter>
       <Container maxWidth="lg">
@@ -28,10 +27,11 @@ const App: React.FC = () => {
           pauseOnFocusLoss
           draggable
           pauseOnHover
+          limit={1000}
         />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/auth" element={<Login />} />
+          <Route path="/auth" element={<Login/>} />
           <Route path="/password" element={<PasswordSetting />} />
           <Route path="/streaks" element={<Streaks/>} />
         </Routes>

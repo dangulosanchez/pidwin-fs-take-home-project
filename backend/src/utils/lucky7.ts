@@ -1,5 +1,9 @@
 // Types
 import { Lucky7RollResult } from "../types/lucky7.js";
+// Models
+import User from "../models/user.js";
+// Sockets
+import { io } from "../../index.js";
 
 // Inclusive whole number random function as per Stack overflow
 function getRandomInt(min: number, max: number) {
@@ -33,7 +37,27 @@ const performLucky7Evaluation = (result: Lucky7RollResult, tokensWagered: number
     return tokensWagered;
 }
 
+const updateUserTokens = async (email: string, tokens: number ) => {
+  const updated = await User.findOneAndUpdate(
+    { email },
+    { $set: { tokens } },
+    { 
+      new: true,
+      runValidators: true, 
+      useFindAndModify: false, 
+    }
+  );
+
+  if (!updated) {
+    throw new Error(`No user found with email: ${email}`);
+  }
+
+  io.to(email).emit("userTokens", { tokens });
+  return updated;
+}
+
 export {
+    updateUserTokens,
     isWithinTenSeconds,
     lucky7Roll,
     performLucky7Evaluation

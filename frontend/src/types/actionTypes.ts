@@ -81,3 +81,7 @@ export interface StreaksAction {
     email: string;
     tokens: number;
   }
+
+  export interface StartLucky7Data {
+    email: string;
+  }
